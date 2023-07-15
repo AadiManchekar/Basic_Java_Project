@@ -8,6 +8,9 @@ pipeline {
 
     environment {
         imageName = "basic-app:${env.BUILD_NUMBER}"
+        pdfFilename = "trivy_repository_scan_${env.BUILD_NUMBER}"
+        s3Bucket = "trivy-scans-pdf"
+        awsProfile = "trivy-rwd"
     }
 
     stages {
@@ -21,6 +24,9 @@ pipeline {
                 script {
                     sh 'java -version'
                     sh 'mvn --version'
+                    sh 'python3 --version'
+                    sh 'docker --version'
+                    sh 'aws --version'
                 }
             }
         }
@@ -32,14 +38,22 @@ pipeline {
         stage("TRIVY SCAN ON REPOSITORY") {
             steps {
                 sh "trivy fs --security-checks vuln,config -f json -o trivy_repository_scan.json /root/.jenkins/workspace/test"
-                sh "ls"
+            }
+        }
+        stage('GENERATE TRIVY PDF AND UPLOAD TO S3') {
+            steps {
+                script {
+                    sh "python3 json_to_html.py"
+
+                    withAWS(credentials: 'aws-credentials', profileName: awsProfile) {
+                    sh "aws s3 cp ${pdfFilename}.pdf s3://${s3Bucket}/${pdfFilename}.pdf"
+                }
+                }
             }
         }
         stage("CODE BUILD") {
             steps {
                 sh "mvn clean install"
-                sh "ls"
-                sh "pwd"
             }
         }
         stage("DOCKER BUILD") {
@@ -54,14 +68,22 @@ pipeline {
                 sh "docker build -t $imageName ."
             }    
         }
-        stage('Deploy to Production') {
+        stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Use the 'imageName' variable in other stages
-                    sh "docker run -d $imageName"
-                    // Other deployment steps
+                    // Push the Docker image to Docker Hub
+                    sh "docker push $imageName"
                 }
             }
         }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    // Push the Docker image to Docker Hub
+                    sh "docker push $imageName"
+                }
+            }
+        }
+    
     }
 }
