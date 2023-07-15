@@ -44,10 +44,10 @@ pipeline {
             steps {
                 script {
                     sh "python3 json_to_html.py"
-
-                    withAWS(credentials: 'aws-credentials', profileName: awsProfile) {
-                    sh "aws s3 cp ${pdfFilename}.pdf s3://${s3Bucket}/${pdfFilename}.pdf"
-                }
+        
+                    withAWS(credentials: 'trivy-s3-aws-credentials', profileName: awsProfile) {
+                        sh "aws s3 cp ${pdfFilename}.html s3://${s3Bucket}/${pdfFilename}.html"
+                    }
                 }
             }
         }
@@ -68,22 +68,13 @@ pipeline {
                 sh "docker build -t $imageName ."
             }    
         }
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    // Push the Docker image to Docker Hub
-                    sh "docker push $imageName"
-                }
-            }
-        }
-        stage('Push to Docker Hub') {
-            steps {
-                script {
-                    // Push the Docker image to Docker Hub
-                    sh "docker push $imageName"
-                }
-            }
-        }
-    
+        // stage('Push to Docker Hub') {
+        //     steps {
+        //         script {
+        //             // Push the Docker image to Docker Hub
+        //             sh "docker push $imageName"
+        //         }
+        //     }
+        // }
     }
 }
