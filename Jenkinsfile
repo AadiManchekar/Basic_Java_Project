@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     // Use the 'imageName' variable in other stages
-                    sh "docker run $imageName"
+                    sh "docker run -d $imageName"
                     // Other deployment steps
                 }
             }
