@@ -21,11 +21,11 @@ pipeline {
                 sh "rm -rf ./*"
             }
         }
-        stage('GIT CHECKOUT') {
-            steps {
-                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/AadiManchekar/Basic_Java_Project.git'
-            }
-        }
+        // stage('GIT CHECKOUT') {
+        //     steps {
+        //         git branch: 'main', changelog: false, poll: false, url: 'https://github.com/AadiManchekar/Basic_Java_Project.git'
+        //     }
+        // }
         stage('PRINT VERSIONS') {
             steps {
                 script {
