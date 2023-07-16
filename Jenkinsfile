@@ -67,7 +67,7 @@ pipeline {
                 sh ("trivy fs --scanners vuln,config -f json -o trivy_repository_scan${BUILD_NUMBER}.json .")
                 
                 echo "RUNNING TRIVY SCAN ON IMAGE"
-                sh ('trivy image --severity HIGH,CRITICAL --scanners vuln -f json -o trivy_image_scan$BUILD_NUMBER.json $DOCKER_USERNAME/$imageName')
+                sh ('trivy image --severity HIGH,CRITICAL --scanners vuln -f json -o trivy_image_scan$BUILD_NUMBER.json $DOCKER_USR/$imageName')
 
             }
         }
