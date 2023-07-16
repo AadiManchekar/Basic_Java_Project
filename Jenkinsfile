@@ -16,7 +16,7 @@ pipeline {
     }
 
     stages {
-        stage("Clenup Build Folder") {
+        stage("CLEANUP BUILD FOLDER") {
             steps {
                 sh "rm -rf ./*"
             }
@@ -80,7 +80,7 @@ pipeline {
                 }
             }
         }
-        stage("Push") {
+        stage("IMAGE PUSH") {
             steps {
                 script {
                     // Push the Docker image to Docker Hub
