@@ -64,8 +64,11 @@ pipeline {
         stage("TRIVY SCAN") {
             steps {
                 echo "RUNNING TRIVY SCAN ON REPOSITORY"
-                sh ("trivy fs --security-checks vuln,config -f json -o trivy_repository_scan${BUILD_NUMBER}.json .")
-                sh ('trivy image --severity HIGH,CRITICAL --scanners vuln -f json -o trivy_image_scan${BUILD_NUMBER}.json ${DOCKER_USERNAME}/${imageName}')
+                sh ("trivy fs --scanners vuln,config -f json -o trivy_repository_scan${BUILD_NUMBER}.json .")
+                
+                echo "RUNNING TRIVY SCAN ON IMAGE"
+                sh ('trivy image --severity HIGH,CRITICAL --scanners vuln -f json -o trivy_image_scan$BUILD_NUMBER.json $DOCKER_USERNAME/$imageName')
+
             }
         }
         stage('GENERATE TRIVY PDF AND UPLOAD TO S3') {
