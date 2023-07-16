@@ -8,8 +8,8 @@ pipeline {
 
     environment {
         imageName = "basic-app:${env.BUILD_NUMBER}"
-        repoPdf = "trivy_repository_scan_${env.BUILD_NUMBER}"
-        imagePdf = "trivy_image_scan_${env.BUILD_NUMBER}"
+        repoPdf = "trivy_repository_scan${env.BUILD_NUMBER}"
+        imagePdf = "trivy_image_scan${env.BUILD_NUMBER}"
         s3Bucket = "trivy-scans-pdf"
         awsProfile = "trivy-rwd"
     }
@@ -68,8 +68,8 @@ pipeline {
             }
             steps {
                 echo "RUNNING TRIVY SCAN ON REPOSITORY"
-                sh "trivy fs --security-checks vuln,config -f json -o trivy_repository_scan_${BUILD_NUMBER}.json ."
-                sh ('trivy image --security-checks vuln,config -f json -o trivy_image_scan_$BUILD_NUMBER.json $DOCKER_USR/$imageName')
+                sh "trivy fs --security-checks vuln,config -f json -o trivy_repository_scan${BUILD_NUMBER}.json ."
+                sh ('trivy image --security-checks vuln,config -f json -o trivy_image_scan$BUILD_NUMBER.json $DOCKER_USR/$imageName')
             }
         }
         stage('GENERATE TRIVY PDF AND UPLOAD TO S3') {
